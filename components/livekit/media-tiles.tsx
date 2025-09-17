@@ -16,27 +16,6 @@ const MotionVideoTile = motion.create(VideoTile);
 const MotionAgentTile = motion.create(AgentTile);
 const MotionAvatarTile = motion.create(AvatarTile);
 
-const animationProps = {
-  initial: {
-    opacity: 0,
-    scale: 0,
-  },
-  animate: {
-    opacity: 1,
-    scale: 1,
-  },
-  exit: {
-    opacity: 0,
-    scale: 0,
-  },
-  transition: {
-    type: 'spring',
-    stiffness: 675,
-    damping: 75,
-    mass: 1,
-  },
-};
-
 const classNames = {
   // GRID
   // 2 Columns x 3 Rows
@@ -103,22 +82,6 @@ export function MediaTiles({ chatOpen }: MediaTilesProps) {
   const isScreenShareEnabled = screenShareTrack && !screenShareTrack.publication.isMuted;
   const hasSecondTile = isCameraEnabled || isScreenShareEnabled;
 
-  const transition = {
-    ...animationProps.transition,
-    delay: chatOpen ? 0 : 0.15, // delay on close
-  };
-  const agentAnimate = {
-    ...animationProps.animate,
-    scale: chatOpen ? 1 : 3,
-    transition,
-  };
-  const avatarAnimate = {
-    ...animationProps.animate,
-    transition,
-  };
-  const agentLayoutTransition = transition;
-  const avatarLayoutTransition = transition;
-
   const isAvatar = agentVideoTrack !== undefined;
 
   return (
@@ -141,9 +104,6 @@ export function MediaTiles({ chatOpen }: MediaTilesProps) {
                 <MotionAgentTile
                   key="agent"
                   layoutId="agent"
-                  {...animationProps}
-                  animate={agentAnimate}
-                  transition={agentLayoutTransition}
                   state={agentState}
                   audioTrack={agentAudioTrack}
                   className={cn(chatOpen ? 'h-[90px]' : 'h-auto w-full')}
@@ -154,9 +114,6 @@ export function MediaTiles({ chatOpen }: MediaTilesProps) {
                 <MotionAvatarTile
                   key="avatar"
                   layoutId="avatar"
-                  {...animationProps}
-                  animate={avatarAnimate}
-                  transition={avatarLayoutTransition}
                   videoTrack={agentVideoTrack}
                   className={cn(
                     chatOpen ? 'h-[90px] [&>video]:h-[90px] [&>video]:w-auto' : 'h-auto w-full'
@@ -180,10 +137,8 @@ export function MediaTiles({ chatOpen }: MediaTilesProps) {
                   key="camera"
                   layout="position"
                   layoutId="camera"
-                  {...animationProps}
                   trackRef={cameraTrack}
                   transition={{
-                    ...animationProps.transition,
                     delay: chatOpen ? 0 : 0.15,
                   }}
                   className="h-[90px]"
@@ -195,10 +150,8 @@ export function MediaTiles({ chatOpen }: MediaTilesProps) {
                   key="screen"
                   layout="position"
                   layoutId="screen"
-                  {...animationProps}
                   trackRef={screenShareTrack}
                   transition={{
-                    ...animationProps.transition,
                     delay: chatOpen ? 0 : 0.15,
                   }}
                   className="h-[90px]"

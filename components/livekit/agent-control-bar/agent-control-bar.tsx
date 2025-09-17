@@ -2,8 +2,10 @@
 
 import * as React from 'react';
 import { useCallback } from 'react';
+import Link from 'next/link';
 import { Track } from 'livekit-client';
-import { BarVisualizer, useRemoteParticipants } from '@livekit/components-react';
+import { BarVisualizer, useRemoteParticipants, useRoomContext } from '@livekit/components-react';
+import { RecordIcon } from '@phosphor-icons/react';
 import { ChatTextIcon, PhoneDisconnectIcon } from '@phosphor-icons/react/dist/ssr';
 import { ChatInput } from '@/components/livekit/chat/chat-input';
 import { Button } from '@/components/ui/button';
@@ -38,6 +40,7 @@ export function AgentControlBar({
   onDeviceError,
   ...props
 }: AgentControlBarProps) {
+  const room = useRoomContext();
   const participants = useRemoteParticipants();
   const [chatOpen, setChatOpen] = React.useState(false);
   const [isSendingMessage, setIsSendingMessage] = React.useState(false);
@@ -123,7 +126,7 @@ export function AgentControlBar({
           {visibleControls.microphone && (
             <div className="flex items-center gap-0">
               <TrackToggle
-                variant="primary"
+                variant="outline"
                 source={Track.Source.Microphone}
                 pressed={microphoneToggle.enabled}
                 disabled={microphoneToggle.pending}
@@ -166,7 +169,7 @@ export function AgentControlBar({
           {capabilities.supportsVideoInput && visibleControls.camera && (
             <div className="flex items-center gap-0">
               <TrackToggle
-                variant="primary"
+                variant="outline"
                 source={Track.Source.Camera}
                 pressed={cameraToggle.enabled}
                 pending={cameraToggle.pending}
@@ -195,7 +198,7 @@ export function AgentControlBar({
           {capabilities.supportsScreenShare && visibleControls.screenShare && (
             <div className="flex items-center gap-0">
               <TrackToggle
-                variant="secondary"
+                variant="outline"
                 source={Track.Source.ScreenShare}
                 pressed={screenShareToggle.enabled}
                 disabled={screenShareToggle.pending}
@@ -207,7 +210,7 @@ export function AgentControlBar({
 
           {visibleControls.chat && (
             <Toggle
-              variant="secondary"
+              variant="outline"
               aria-label="Toggle chat"
               pressed={chatOpen}
               onPressedChange={setChatOpen}
@@ -217,6 +220,13 @@ export function AgentControlBar({
               <ChatTextIcon weight="bold" />
             </Toggle>
           )}
+
+          <Button variant="link" className="text-foreground">
+            <RecordIcon color="red" />
+            <Link href={`/livekit/${room.name}`} target="_blank">
+              Records
+            </Link>
+          </Button>
         </div>
         {visibleControls.leave && (
           <Button
